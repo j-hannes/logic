@@ -1,6 +1,7 @@
 var gulp    = require('gulp')
 var connect = require('gulp-connect')
 var watch   = require('gulp-watch')
+var browserify = require('gulp-browserify')
 
 gulp.task('connect', function() {
   connect.server({
@@ -18,6 +19,21 @@ gulp.task('watch', function() {
       'app/images/**/*.*',
     ]
   }).pipe(connect.reload())
+
+  watch({
+    glob: [
+      'src/js/**/*.js',
+    ]
+  }, ['browserify'])
+})
+
+gulp.task('browserify', function() {
+  gulp.src('src/js/application.js')
+      .pipe(browserify({
+        insertGlobals: true,
+        debug: !gulp.env.production,
+      }))
+      .pipe(gulp.dest('./app/scripts'))
 })
 
 gulp.task('default', [
