@@ -1,0 +1,95 @@
+body {
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+  color: #333;
+}
+
+table, tr, td {
+  border-collapse: collapse;
+}
+
+#grid {
+  margin: 20px;
+}
+
+.cell {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+}
+.cell:nth-child(-n+4) {
+  border-right: 0;
+  border-left: 0;
+}
+.cell:first-child,
+.cell:nth-child(5) {
+  border-left: 2px solid #ccc;
+}
+.cell:nth-child(5n+4) {
+  border-right: 2px solid #ccc;
+}
+
+.row:nth-child(-n+6) .cell {
+  border-top: 0;
+  border-bottom: 0;
+}
+.row:first-child .cell,
+.row:nth-child(7) .cell {
+    border-top: 2px solid #ccc;
+}
+.row:nth-child(5n+6) .cell {
+  border-bottom: 2px solid #ccc;
+}
+
+/*.cell2 {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #666;
+  background: #ccc;
+}
+
+.cell.on {
+  background: #9CC222;
+}
+.cell.off {
+  background: #fff;
+}
+
+.roow {
+  height: 21px;
+}
+
+.colValues {
+  overflow: visible;
+}
+
+.colValues .col {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-left: -1px;
+  text-align: center;
+}
+.colValues .col div {
+  padding-bottom: 5px;
+}
+.colValues .buffer {
+  display: inline-block;
+  width: 102px;
+}
+
+.rowValues {
+  display: inline-block;
+  width: 100px;
+  height: 20px;
+  border: 1px solid;
+  text-align: right;
+}
+.rowValues span {
+  display: inline-block;
+  width: 20px;
+  height: 18px;
+  text-align: center;
+  padding-top: 2px;
+}*/

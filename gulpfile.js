@@ -1,6 +1,7 @@
 var gulp    = require('gulp')
 var connect = require('gulp-connect')
 var watch   = require('gulp-watch')
+var gutil   = require('gulp-util')
 var browserify = require('gulp-browserify')
 
 gulp.task('connect', function() {
@@ -33,6 +34,9 @@ gulp.task('browserify', function() {
         insertGlobals: true,
         debug: !gulp.env.production,
       }))
+      .on('error', function(err) {
+        gutil.log(err.message)
+      })
       .pipe(gulp.dest('./app/scripts'))
 })
 

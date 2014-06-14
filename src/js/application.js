@@ -1,1 +1,2 @@
-console.log('this is browserified')
+var App = require('./grid-app')
+new App()
