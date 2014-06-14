@@ -1,0 +1,16 @@
+{
+  "name": "logic",
+  "version": "0.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp-watch": "^0.6.5",
+    "gulp-connect": "^2.0.5",
+    "gulp": "^3.7.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
