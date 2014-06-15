@@ -5,7 +5,9 @@ var GridView  = require('./modules/grid/grid-view')
 
 var set = require('./sets/set-9')
 
-var board = new Board(set)
+var board = new Board()
+board.createRowsFromSet(set)
+
 var grid = new Grid(board)
 
 var gridView = new GridView({model: grid})

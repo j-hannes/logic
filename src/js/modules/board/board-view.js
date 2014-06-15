@@ -4,8 +4,8 @@ Backbone.$ = $
 // var _ = require('underscore')
 
 var BoardView = Backbone.View.extend({
-  renderToGrid: function() {
-    
+  renderToGrid: function(grid) {
+    console.log(this.model.toJSON())
   }
 })
 

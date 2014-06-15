@@ -15,10 +15,8 @@ var Board = Backbone.Model.extend({
     }
   },
 
-  initialize: function(set) {
-    this.set = set
-
-    var cells = this.produceCells()
+  createRowsFromSet: function(set) {
+    var cells = this.produceCells(set)
 
     _.each(_.range(set.vertical.length), function(n) {
       var row = new Row()
@@ -38,15 +36,10 @@ var Board = Backbone.Model.extend({
       }, this)
       this.get('rows').horizontal.push(row)
     }, this)
-
-    console.log(this.get('rows').horizontal)
-    console.log(this.get('rows').vertical)
-
-    window.rows = this.rows
   },
 
-  produceCells: function() {
-    var numberOfCells = this.set.horizontal.length * this.set.vertical.length
+  produceCells: function(set) {
+    var numberOfCells = set.horizontal.length * set.vertical.length
     return _.map(_.range(numberOfCells), function() {
       return new Cell()
     })
