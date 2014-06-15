@@ -58,8 +58,18 @@ table, tr, td {
 }
 
 .rowValue {
-  padding-top: 2px;
   font-size: 13px;
+  padding-top: 2px;
+}
+
+.rowSum {
+  font-size: 12px;
+  font-weight: bold;
+  padding-top: 2px;
+  color: #aaa;
+}
+.rowSum.good {
+  color: #268bd2;
 }
 
 .cell {
