@@ -1,5 +1,5 @@
 module.exports = {
-  x: [
+  vertical: [
     [4],
     [3],
     [3],
@@ -36,7 +36,7 @@ module.exports = {
     [2],
     [2],
   ],
-  y: [
+  horizontal: [
     [12],
     [4,2],
     [2,4],
