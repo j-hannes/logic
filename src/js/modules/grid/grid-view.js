@@ -24,7 +24,7 @@ module.exports = Backbone.View.extend({
     _.each(rows, function() {
       var row = $('<tr class="row">')
       _.each(cols, function() {
-        var col = $('<td class="cell">')
+        var col = $('<td class="col">')
         row.append(col)
       })
       table.append(row)

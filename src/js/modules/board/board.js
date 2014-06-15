@@ -31,11 +31,13 @@ var Board = Backbone.Model.extend({
       var row = new Row()
       row.set('blocks', set.horizontal[x])
       _.each(_.range(set.vertical.length), function(y) {
-        var cell = this.get('rows').vertical.at(x).get('cells').at(y)
+        var cell = this.get('rows').vertical.at(y).get('cells').at(x)
         row.get('cells').push(cell)
       }, this)
       this.get('rows').horizontal.push(row)
     }, this)
+
+    window.rows = this.rows
   },
 
   produceCells: function(set) {

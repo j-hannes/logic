@@ -10,86 +10,64 @@ table, tr, td {
 
 #grid {
   margin: 20px;
+  cursor: pointer;
+}
+
+.col {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  text-align: center;
+  color: #333;
+}
+.col:nth-child(-n+6) {
+  border-right: 0;
+  border-left: 0;
+}
+.col:first-child,
+.col:nth-child(7) {
+  border-left: 2px solid #ccc;
+}
+.col:nth-child(5n+6) {
+  border-right: 2px solid #ccc;
+}
+
+.row:nth-child(-n+8) .col {
+  border-top: 0;
+  border-bottom: 0;
+}
+.row:first-child .col,
+.row:nth-child(9) .col {
+    border-top: 2px solid #ccc;
+}
+.row:nth-child(5n+8) .col {
+  border-bottom: 2px solid #ccc;
+}
+
+.rowValue {
+  padding-top: 2px;
+  font-size: 13px;
 }
 
 .cell {
   width: 20px;
-  height: 20px;
-  border: 1px solid #ccc;
-}
-.cell:nth-child(-n+4) {
-  border-right: 0;
-  border-left: 0;
-}
-.cell:first-child,
-.cell:nth-child(5) {
-  border-left: 2px solid #ccc;
-}
-.cell:nth-child(5n+4) {
-  border-right: 2px solid #ccc;
-}
-
-.row:nth-child(-n+6) .cell {
-  border-top: 0;
-  border-bottom: 0;
-}
-.row:first-child .cell,
-.row:nth-child(7) .cell {
-    border-top: 2px solid #ccc;
-}
-.row:nth-child(5n+6) .cell {
-  border-bottom: 2px solid #ccc;
-}
-
-/*.cell2 {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #666;
-  background: #ccc;
+  height: 19px;
+  padding-top: 1px;
+  color: #666;
+  /*border: 1px solid #666;*/
+  /*background: #eee;*/
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .cell.on {
   background: #9CC222;
 }
 .cell.off {
-  background: #fff;
+  /*background: #fff;*/
+  content: '•';
 }
-
-.roow {
-  height: 21px;
-}
-
-.colValues {
-  overflow: visible;
-}
-
-.colValues .col {
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  margin-left: -1px;
-  text-align: center;
-}
-.colValues .col div {
-  padding-bottom: 5px;
-}
-.colValues .buffer {
-  display: inline-block;
-  width: 102px;
-}
-
-.rowValues {
-  display: inline-block;
-  width: 100px;
-  height: 20px;
-  border: 1px solid;
-  text-align: right;
-}
-.rowValues span {
-  display: inline-block;
-  width: 20px;
-  height: 18px;
-  text-align: center;
-  padding-top: 2px;
-}*/

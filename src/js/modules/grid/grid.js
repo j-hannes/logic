@@ -3,11 +3,11 @@ var _ = require('underscore')
 
 module.exports = Backbone.Model.extend({
   initialize: function(board) {
-    var maxHorizontalBlocks = this.getMaxBlocks(board.get('rows').horizontal)
-    var width = board.get('rows').vertical.length + maxHorizontalBlocks
+    this.set('horizontalOffset', this.getMaxBlocks(board.get('rows').horizontal))
+    this.set('verticalOffset', this.getMaxBlocks(board.get('rows').vertical))
 
-    var maxVerticalBlocks = this.getMaxBlocks(board.get('rows').vertical)
-    var height = board.get('rows').horizontal.length + maxVerticalBlocks
+    var width = board.get('rows').vertical.length + this.get('horizontalOffset')
+    var height = board.get('rows').horizontal.length + this.get('verticalOffset')
 
     this.set('width', width)
     this.set('height', height)
@@ -16,6 +16,6 @@ module.exports = Backbone.Model.extend({
   getMaxBlocks: function(rows) {
     var blocks = rows.pluck('blocks')
     var comparator = function(x) {return x.length}
-    return _.max(blocks, comparator).length
+    return _.max(blocks, comparator).length + 2
   },
 })
