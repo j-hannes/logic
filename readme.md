@@ -12,3 +12,4 @@ todo
 * autosolve known parts
 * remove lines when solved
 * multiple colors
+* use haskell for the core (somehow...)
