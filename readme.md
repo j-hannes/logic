@@ -1,7 +1,8 @@
 todo
 ----
-* refactoring
+* add sass
 * decouple hard coded css formatting
+* js refactoring
 * back button (implement router)
 * auto marker
 * highlight solvable number ;)
