@@ -4,6 +4,9 @@ Backbone.$ = $
 var _ = require('underscore')
 
 var CellView = require('../cell/cell-view')
+var MarkerView = require('../marker/marker-view')
+var Block = require('../block/block')
+var BlockView = require('../block/block-view')
 
 var BoardView = Backbone.View.extend({
   renderToGrid: function(grid) {
@@ -12,6 +15,7 @@ var BoardView = Backbone.View.extend({
     this.writeVerticalBlocks(grid)
     this.writeVerticalBlocksums(grid)
     this.placeCells(grid)
+    this.placeMarkers(grid)
   },
 
   writeHorizontalBlocks: function(grid) {
@@ -19,8 +23,10 @@ var BoardView = Backbone.View.extend({
     _.each(horizontalBlocks, function(values, row) {
       var leftOffset = grid.model.get('horizontalOffset') - values.length;
       _.each(values, function(value, col) {
+        var block = new Block({value: value})
+        var view = new BlockView({model: block})
         grid.placeContent(grid.model.get('verticalOffset') + row + 1,
-                          leftOffset + col + 1, this.wrap(value))
+                          leftOffset + col + 1, view.render().el)
       }, this)
     }, this)
   },
@@ -30,9 +36,11 @@ var BoardView = Backbone.View.extend({
     _.each(verticalBlocks, function(values, col) {
       var topOffset = grid.model.get('verticalOffset') - values.length;
       _.each(values, function(value, row) {
+        var block = new Block({value: value})
+        var view = new BlockView({model: block})
         grid.placeContent(topOffset + row + 1,
                           grid.model.get('horizontalOffset') + col + 1,
-                          this.wrap(value))
+                          view.render().el)
       }, this)
     }, this)
   },
@@ -46,6 +54,26 @@ var BoardView = Backbone.View.extend({
                           grid.model.get('horizontalOffset') + 1 + y,
                           view.render().el)
       })
+    })
+  },
+
+  placeMarkers: function(grid) {
+    var horizontal = this.model.get('rows').horizontal.length
+    var vertical = this.model.get('rows').vertical.length
+    var numberOfMarkers = horizontal + vertical
+
+    var markers = _.map(_.range(numberOfMarkers), function() {
+      return new MarkerView()
+    })
+
+    _.each(_.range(vertical), function(col) {
+      grid.placeContent(1, grid.model.get('horizontalOffset') + col + 1,
+                        markers.shift().render().el)
+    })
+
+    _.each(_.range(horizontal), function(row) {
+      grid.placeContent(grid.model.get('verticalOffset') + row + 1, 1,
+                        markers.shift().render().el)
     })
   },
 
@@ -71,10 +99,6 @@ var BoardView = Backbone.View.extend({
       grid.placeContent(2, col + grid.model.get('horizontalOffset') + 1,
                         this.wrapSum(space, good))
     }, this)
-  },
-
-  wrap: function(value) {
-    return $('<div class="rowValue">').text(value)
   },
 
   wrapSum: function(value, good) {
