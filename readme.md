@@ -1,16 +1,14 @@
 Logic puzzle app
 ================
 
-We create something like that:
+We create something like this:
 
 ![app screenshot](assets/logic_preview.png)
 
 More documentation will be added soon. For now ...
 
-what is still TODO?
--------------------
-
-![triple facepalm](http://bit.ly/1p8Mt49)
+... what is still TODO?
+-----------------------
 
 * add sass
 * decouple hard coded css formatting
@@ -30,3 +28,5 @@ what is still TODO?
 * multiple colors
 * use haskell for the core (somehow...)
 * create a list page to select different puzzles
+
+![triple facepalm](http://bit.ly/1p8Mt49)
