@@ -6,7 +6,7 @@ Documentation will be added soon. For now ...
 what is still TODO?
 -------------------
 
-![triple facepalm](bit.ly/1p8Mt49)
+![triple facepalm](http://bit.ly/1p8Mt49)
 
 * add sass
 * decouple hard coded css formatting
