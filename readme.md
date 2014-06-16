@@ -4,6 +4,7 @@ todo
 * decouple hard coded css formatting
 * js refactoring
 * back button (implement router)
+* save puzzle (local store)
 * auto marker
 * highlight solvable number ;)
 * highlight line + row under cursor
@@ -14,3 +15,4 @@ todo
 * remove lines when solved
 * multiple colors
 * use haskell for the core (somehow...)
+* create a list page to select different puzzles
