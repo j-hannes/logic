@@ -28,5 +28,6 @@ More documentation will be added soon. For now ...
 * multiple colors
 * use haskell for the core (somehow...)
 * create a list page to select different puzzles
+* support swiping (fill multiple cells in one go)
 
 ![triple facepalm](http://bit.ly/1p8Mt49)
