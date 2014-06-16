@@ -3,7 +3,7 @@ Logic puzzle app
 
 We create something like that:
 
-![app screenshot](assets/logic_preview.png)
+![app screenshot](./assets/logic_preview.png)
 
 More documentation will be added soon. For now ...
 
