@@ -57,9 +57,13 @@ table, tr, td {
   border-right: none;
 }
 
-.rowValue {
+.block {
   font-size: 13px;
   padding-top: 2px;
+}
+.block.crossed {
+  color: #ccc;
+  text-decoration: line-through;
 }
 
 .rowSum {
@@ -93,4 +97,12 @@ table, tr, td {
 .cell.off {
   /*background: #fff;*/
   content: '•';
+}
+
+.marker {
+  height: 20px;
+  width: 20px;
+}
+.marker.marked {
+  background: #93a1a1;
 }
