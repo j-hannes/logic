@@ -10,7 +10,6 @@ module.exports = Backbone.View.extend({
   },
 
   toggleMark: function() {
-    console.log('xx')
     this.$el.toggleClass('marked')
   },
 })
