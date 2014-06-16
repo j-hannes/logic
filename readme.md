@@ -1,7 +1,11 @@
 Logic puzzle app
 ================
 
-Documentation will be added soon. For now ...
+We create something like that:
+
+![app screenshot](assets/logic_preview.png)
+
+More documentation will be added soon. For now ...
 
 what is still TODO?
 -------------------
