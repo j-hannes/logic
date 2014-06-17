@@ -16,6 +16,7 @@ var Board = Backbone.Model.extend({
   },
 
   createRowsFromSet: function(set) {
+    // refactor: function does too many things
     var cells = this.produceCells(set)
 
     _.each(_.range(set.vertical.length), function(n) {
@@ -37,7 +38,20 @@ var Board = Backbone.Model.extend({
       this.get('rows').horizontal.push(row)
     }, this)
 
-    window.rows = this.rows
+    this.set('offsetX', this.getMaxBlocks(this.get('rows').horizontal))
+    this.set('offsetY', this.getMaxBlocks(this.get('rows').vertical))
+
+    var width = this.get('rows').vertical.length + this.get('offsetX')
+    var height = this.get('rows').horizontal.length + this.get('offsetY')
+
+    this.set('width', width)
+    this.set('height', height)
+  },
+
+  getMaxBlocks: function(rows) {
+    var blocks = rows.pluck('blocks')
+    var comparator = function(x) {return x.length}
+    return _.max(blocks, comparator).length + 2
   },
 
   produceCells: function(set) {

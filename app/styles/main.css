@@ -8,7 +8,7 @@ table, tr, td {
   border-collapse: collapse;
 }
 
-#grid {
+#board {
   margin: 20px;
   cursor: pointer;
 }
