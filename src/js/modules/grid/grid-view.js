@@ -3,33 +3,32 @@ var Backbone = require('backbone')
 Backbone.$ = $
 var _ = require('underscore')
 
-module.exports = Backbone.View.extend({
-  el: '#grid',
+var Grid = require('./grid')
 
-  initialize: function() {
-    this.render()
-  },
+module.exports = Backbone.View.extend({
+  template: _.template('<table><tbody></tbody></table>'),
 
   render: function() {
-    var width = this.model.get('width')
-    var height = this.model.get('height')
+    if (this.model.get('dimensionsAreSet')) {
+      this.renderTable()
+    }
+    return this
+  },
 
-    var rows = _.range(height)
-    var cols = _.range(width)
+  renderTable: function() {
+    var rowNumbers = _.range(this.model.get('height'))
+    var colNumbers = _.range(this.model.get('width'))
 
-    var table = $('<table>')
-    var tbody = $('<tbody>')
-    table.append(tbody)
+    this.$el.html(this.template())
+    var tbody = this.$('tbody')
 
-    _.each(rows, function() {
+    _.each(rowNumbers, function() {
       var row = $('<tr class="row">')
-      _.each(cols, function() {
-        var col = $('<td class="col">')
-        row.append(col)
-      })
-      table.append(row)
-    })
-    this.$el.append(table)
+      _.each(colNumbers, function() {
+        row.append($('<td class="col">'))
+      }, this)
+      tbody.append(row)
+    }, this)
   },
 
   placeContent: function(row, col, content) {
