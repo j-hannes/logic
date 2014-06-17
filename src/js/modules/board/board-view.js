@@ -11,6 +11,9 @@ var BlockView = require('../block/block-view')
 var Grid = require('../grid/grid')
 var GridView = require('../grid/grid-view')
 
+var ISum = require('../isum/isum')
+var ISumView = require('../isum/isum-view')
+
 var BoardView = Backbone.View.extend({
   el: '#board',
 
@@ -96,25 +99,25 @@ var BoardView = Backbone.View.extend({
 
   writeHorizontalBlocksums: function() {
     var blocks = this.model.get('rows').horizontal.pluck('blocks')
-    _.each(blocks, function(block, row) {
-      var add = function(a, b) {return a + b}
-      var sum = _.foldl(block, add, 0)
-      var space = sum + block.length - 1
-      var good = space > this.model.get('rows').vertical.length - _.max(block)
-      this.gridView.placeContent(row + this.model.get('offsetY') + 1, 2,
-                                 this.wrapSum(space, good))
+    var numBlocks = this.model.get('rows').vertical.length
+    _.each(blocks, function(block, n) {
+      var iSum = new ISum({blocks: block, numBlocks: numBlocks})
+      var iSumView = new ISumView({model: iSum})
+      var row = n + this.model.get('offsetY') + 1
+      var col = 2
+      this.gridView.placeContent(row, col, iSumView.render().el)
     }, this)
   },
 
   writeVerticalBlocksums: function() {
     var blocks = this.model.get('rows').vertical.pluck('blocks')
-    _.each(blocks, function(block, col) {
-      var add = function(a, b) {return a + b}
-      var sum = _.foldl(block, add, 0)
-      var space = sum + block.length - 1
-      var good = space > this.model.get('rows').horizontal.length - _.max(block)
-      this.gridView.placeContent(2, col + this.model.get('offsetX') + 1,
-                                 this.wrapSum(space, good))
+    var numBlocks = this.model.get('rows').horizontal.length
+    _.each(blocks, function(block, n) {
+      var iSum = new ISum({blocks: block, numBlocks: numBlocks})
+      var iSumView = new ISumView({model: iSum})
+      var row = 2
+      var col = n + this.model.get('offsetX') + 1
+      this.gridView.placeContent(row, col, iSumView.render().el)
     }, this)
   },
 
