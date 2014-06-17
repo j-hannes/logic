@@ -15,10 +15,9 @@ var BoardView = Backbone.View.extend({
   el: '#board',
 
   initialize: function() {
-    this.grid = new Grid()
-    this.gridView = new GridView({model: this.grid})
-
-    this.grid.setDimensions(this.model.get('width'), this.model.get('height'))
+    var grid = new Grid()
+    this.gridView = new GridView({model: grid})
+    grid.setDimensions(this.model.get('width'), this.model.get('height'))
   },
 
   render: function() {
