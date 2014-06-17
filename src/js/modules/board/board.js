@@ -2,6 +2,7 @@ var Backbone = require('backbone')
 var _ = require('underscore')
 
 var Cell = require('../cell/cell')
+var CellCollection = require('../cell/cell-collection')
 var Row = require('../row/row')
 var RowCollection = require('../row/row-collection')
 
@@ -17,14 +18,19 @@ var Board = Backbone.Model.extend({
 
   createRowsFromSet: function(set) {
     // refactor: function does too many things
-    var cells = this.produceCells(set)
+    var rawCells = this.produceCells(set)
 
     _.each(_.range(set.vertical.length), function(n) {
-      var row = new Row()
-      row.set('blocks', set.vertical[n])
-      _.each(_.range(set.horizontal.length), function() {
-        row.get('cells').push(cells.shift())
-      }, this)
+      var blocks = set.vertical[n]
+      var length = set.horizontal.lengt
+      var cells = _.map(_.range(length), function() {
+        return rawCells.shift()
+      })
+      var row = new Row({
+        blocks: blocks,
+        length: length,
+        cells: new CellCollection(cells)
+      })
       this.get('rows').vertical.push(row)
     }, this)
 
