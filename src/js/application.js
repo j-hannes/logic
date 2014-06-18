@@ -105,12 +105,53 @@ var Board = Backbone.Model.extend({
       })
     }, this)
   },
+
+  getRequiredHorizontalFields: function() {
+    return this.getRequiredFields('hRows', 'vRows')
+  },
+
+  getRequiredVerticalFields: function() {
+    return this.getRequiredFields('vRows', 'hRows')
+  },
+
+  getRequiredFields: function(rowType, otherRowType) {
+    var blocks = this.get(rowType).pluck('blocks')
+    var comparator = function(block) {return block.length}
+    var spaceForMarker = 1
+    var spaceForBlocks =_.max(blocks, comparator).length
+    var spaceForCells = this.get(otherRowType).length
+    return spaceForMarker + spaceForBlocks + spaceForCells
+  },
 })
 
 // VIEW LAYER
 
 var GridView = Backbone.View.extend({
+  template: _.template('<table><tbody></tbody></table>'),
 
+  render: function() {
+    var rowNumbers = _.range(this.model.get('height'))
+    var colNumbers = _.range(this.model.get('width'))
+
+    this.$el.html(this.template())
+    var tbody = this.$('tbody')
+
+    _.each(rowNumbers, function() {
+      var row = $('<tr class="row">')
+      _.each(colNumbers, function() {
+        row.append($('<td class="col">'))
+      }, this)
+      tbody.append(row)
+    }, this)
+
+    return this
+  },
+
+  placeContent: function(row, col, content) {
+    this.$el.find('.row:nth-child(' + row + ')')
+            .find('.col:nth-child(' + col + ')')
+            .html(content)
+  },
 })
 
 var BoardView = Backbone.View.extend({
@@ -122,20 +163,18 @@ var BoardView = Backbone.View.extend({
   },
 
   render: function() {
-    this.grid = new GridView({model: new Backbone.Model({
-      width: this.getRequiredFields('hRows', 'vRows'),
-      height: this.getRequiredFields('vRows', 'hRows'),
-    })})
-    console.log(this.grid.model.get('width'), this.grid.model.get('height'))
+    this.createGrid()
+    // now place content of model in grid (assign grid fields and call render
+    // function of RowView)
+    return this
   },
 
-  getRequiredFields: function(rowType, otherRowType) {
-    var blocks = this.model.get(rowType).pluck('blocks')
-    var comparator = function(block) {return block.length}
-    var spaceForMarker = 1
-    var spaceForBlocks =_.max(blocks, comparator).length
-    var spaceForCells = this.model.get(otherRowType).length
-    return spaceForMarker + spaceForBlocks + spaceForCells
+  createGrid: function() {
+    this.gridView = new GridView({model: new Backbone.Model({
+      width: this.model.getRequiredHorizontalFields(),
+      height: this.model.getRequiredVerticalFields(),
+    })})
+    this.$el.html(this.gridView.render().el)
   },
 })
 
