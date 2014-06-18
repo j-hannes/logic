@@ -14,6 +14,8 @@ var set = require('./sets/set-9')
 
 var Backbone = require('backbone')
 var _ = require('underscore')
+var $ = require('jquery')
+Backbone.$ = $
 
 // DATA LAYER
 
@@ -107,24 +109,67 @@ var Board = Backbone.Model.extend({
       })
     }, this)
   },
-
-  interConnectCellsFromRow: function(rowId) {
-    var isHorizontalRow = function(row) {
-      return row.get('orientation') === 'horizontal'
-    }
-    var horizontalRows = this.get('rows').filter(isHorizontalRow)
-    return _.map(horizontalRows, function(horizontalRow) {
-      return horizontalRow.get('cells').at(rowId)
-    },this)
-  },
 })
 
 // VIEW LAYER
 
+var GridView = Backbone.View.extend({
+
+})
+
+var BoardView = Backbone.View.extend({
+  el: '#board',
+
+  initialize: function(options) {
+    this.model = new Board()
+    this.model.initializeSet(options.set)
+  },
+
+  render: function() {
+    this.getTotalWidth()
+    this.grid = new GridView({model: new Backbone.Model({
+      width: this.getTotalWidth(),
+      height: this.getTotalHeight(),
+    })})
+  },
+
+  /**
+   * bad design I'd say ... why are horizontal and vertical rows put together in
+   * one accessor when they need to be treated slightly different?
+   */
+
+  getTotalWidth: function() {
+    var spaceForMarker = 1
+    var spaceForBlocks = this.getMaxAmountOfHorizontalBlocks()
+    var spaceForCells = this.model.get('width')
+    return spaceForMarker + spaceForBlocks + spaceForCells
+  },
+
+  getTotalHeight: function() {
+    var spaceForMarker = 1
+    var spaceForBlocks = this.getMaxAmountOfVerticalBlocks()
+    var spaceForCells = this.model.get('height')
+    return spaceForMarker + spaceForBlocks + spaceForCells
+  },
+
+  getMaxAmountOfHorizontalBlocks: function() {
+    var horizontalRows = this.model.get('rows').take(this.model.get('height'))
+    var comparator = function(row) {return row.get('blocks').length}
+    var rowWithMostBlocks = _.max(horizontalRows, comparator)
+    return rowWithMostBlocks.get('blocks').length
+  },
+
+  getMaxAmountOfVerticalBlocks: function() {
+    var verticalRows = this.model.get('rows').drop(this.model.get('height'))
+    var comparator = function(row) {return row.get('blocks').length}
+    var rowWithMostBlocks = _.max(verticalRows, comparator)
+    return rowWithMostBlocks.get('blocks').length
+  },
+
+})
 
 
 // PROGRAM EXECUTION
 
-window.board = new Board()
-board.initializeSet(set)
-console.log(board.toJSON())
+var boardView = new BoardView({set: set})
+boardView.render()
