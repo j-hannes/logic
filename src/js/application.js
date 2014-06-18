@@ -71,39 +71,35 @@ var RowCollection = Backbone.Collection.extend({
 
 var Board = Backbone.Model.extend({
   defaults: {
-    rows: new RowCollection(),
-    width: 0,
-    height: 0,
+    hRows: new RowCollection(),
+    vRows: new RowCollection(),
   },
 
   initializeSet: function(set) {
-    this.setBoardDimensions(set)
-
-    var cellMatrix = this.produceCellMatrix()
+    var width = set.horizontal.length
+    var height = set.vertical.length
+    var cellMatrix = this.produceCellMatrix(width, height)
     var transposedCellMatrix = this.transposeCellMatrix(cellMatrix)
 
-    this.createRows(set.horizontal, cellMatrix)
-    this.createRows(set.vertical, transposedCellMatrix)
+    this.createRows('hRows', set.horizontal, cellMatrix)
+    this.createRows('vRows', set.vertical, transposedCellMatrix)
   },
 
-  setBoardDimensions: function(set) {
-    this.set('width', set.vertical.length)
-    this.set('height', set.horizontal.length)
-  },
-
-  produceCellMatrix: function() {
-    return _.map(_.range(this.get('height')), function() {
-      return _.map(_.range(this.get('width')), function() {return new Cell()})
-    }, this)
+  produceCellMatrix: function(width, height) {
+    return _.map(_.range(height), function() {
+      return _.map(_.range(width), function() {
+        return new Cell()
+      })
+    })
   },
 
   transposeCellMatrix: function(cells) {
     return _.zip.apply(_, cells)
   },
 
-  createRows: function(blockRows, cellMatrix) {
+  createRows: function(rowType, blockRows, cellMatrix) {
     _.each(blockRows, function(blockRow, rowId) {
-      this.get('rows').add({
+      this.get(rowType).add({
         blocks: blockRow,
         cells: new CellCollection(cellMatrix[rowId])
       })
@@ -126,46 +122,21 @@ var BoardView = Backbone.View.extend({
   },
 
   render: function() {
-    this.getTotalWidth()
     this.grid = new GridView({model: new Backbone.Model({
-      width: this.getTotalWidth(),
-      height: this.getTotalHeight(),
+      width: this.getRequiredFields('hRows', 'vRows'),
+      height: this.getRequiredFields('vRows', 'hRows'),
     })})
+    console.log(this.grid.model.get('width'), this.grid.model.get('height'))
   },
 
-  /**
-   * bad design I'd say ... why are horizontal and vertical rows put together in
-   * one accessor when they need to be treated slightly different?
-   */
-
-  getTotalWidth: function() {
+  getRequiredFields: function(rowType, otherRowType) {
+    var blocks = this.model.get(rowType).pluck('blocks')
+    var comparator = function(block) {return block.length}
     var spaceForMarker = 1
-    var spaceForBlocks = this.getMaxAmountOfHorizontalBlocks()
-    var spaceForCells = this.model.get('width')
+    var spaceForBlocks =_.max(blocks, comparator).length
+    var spaceForCells = this.model.get(otherRowType).length
     return spaceForMarker + spaceForBlocks + spaceForCells
   },
-
-  getTotalHeight: function() {
-    var spaceForMarker = 1
-    var spaceForBlocks = this.getMaxAmountOfVerticalBlocks()
-    var spaceForCells = this.model.get('height')
-    return spaceForMarker + spaceForBlocks + spaceForCells
-  },
-
-  getMaxAmountOfHorizontalBlocks: function() {
-    var horizontalRows = this.model.get('rows').take(this.model.get('height'))
-    var comparator = function(row) {return row.get('blocks').length}
-    var rowWithMostBlocks = _.max(horizontalRows, comparator)
-    return rowWithMostBlocks.get('blocks').length
-  },
-
-  getMaxAmountOfVerticalBlocks: function() {
-    var verticalRows = this.model.get('rows').drop(this.model.get('height'))
-    var comparator = function(row) {return row.get('blocks').length}
-    var rowWithMostBlocks = _.max(verticalRows, comparator)
-    return rowWithMostBlocks.get('blocks').length
-  },
-
 })
 
 
