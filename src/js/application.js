@@ -51,7 +51,6 @@ var Marker = Backbone.Model.extend({
 
 var Row = Backbone.Model.extend({
   defaults: {
-    orientation: 'horizontal',
     blocks: new BlockCollection(),
     cells: new CellCollection(),
     overlap: 0,
@@ -76,41 +75,35 @@ var Board = Backbone.Model.extend({
   },
 
   initializeSet: function(set) {
-    // set board dimensions
-    var width = set.vertical.length
-    var height = set.horizontal.length
+    this.setBoardDimensions(set)
 
-    this.set('width', width)
-    this.set('height', height)
+    var cellMatrix = this.produceCellMatrix()
+    var transposedCellMatrix = this.transposeCellMatrix(cellMatrix)
 
-    // produce cells
-    var amountOfCells = width * height
-    var cellIds = _.range(amountOfCells)
+    this.createRows(set.horizontal, cellMatrix)
+    this.createRows(set.vertical, transposedCellMatrix)
+  },
 
-    var cells = _.map(cellIds, function() {
-      return new Cell()
-    })
+  setBoardDimensions: function(set) {
+    this.set('width', set.vertical.length)
+    this.set('height', set.horizontal.length)
+  },
 
-    // create horizontal rows
-    var amountOfHorizontalRows = height
-    var horizontalRowIds = _.range(amountOfHorizontalRows)
-
-    _.each(horizontalRowIds, function(rowId) {
-      this.get('rows').add({
-        blocks: set.horizontal[rowId],
-        cells: new CellCollection(cells.splice(0, width)),
-      })
+  produceCellMatrix: function() {
+    return _.map(_.range(this.get('height')), function() {
+      return _.map(_.range(this.get('width')), function() {return new Cell()})
     }, this)
+  },
 
-    // create vertical rows
-    var amountOfVerticalRows = width
-    var verticalRowIds = _.range(amountOfVerticalRows)
+  transposeCellMatrix: function(cells) {
+    return _.zip.apply(_, cells)
+  },
 
-    _.each(verticalRowIds, function(rowId) {
+  createRows: function(blockRows, cellMatrix) {
+    _.each(blockRows, function(blockRow, rowId) {
       this.get('rows').add({
-        orientation: 'vertical',
-        blocks: set.vertical[rowId],
-        cells: this.interConnectCellsFromRow(rowId),
+        blocks: blockRow,
+        cells: new CellCollection(cellMatrix[rowId])
       })
     }, this)
   },
@@ -132,6 +125,6 @@ var Board = Backbone.Model.extend({
 
 // PROGRAM EXECUTION
 
-var board = new Board()
+window.board = new Board()
 board.initializeSet(set)
 console.log(board.toJSON())
