@@ -67,27 +67,48 @@ var Row = Backbone.Model.extend({
 
 var RowCollection = Backbone.Collection.extend({
   model: Row,
+
+  offset: function() {
+    var blocks = this.pluck('blocks')
+    var comparator = function(block) {return block.length}
+    var spaceForBlocks =_.max(blocks, comparator).length
+    var spaceForMarker = 1
+    var spaceForSum = 1
+    return spaceForBlocks + spaceForMarker + spaceForSum
+  },
+
+  totalLength: function() {
+    return this.offset() + this.at(0).get('cells').length
+  },
 })
 
 var Board = Backbone.Model.extend({
-  defaults: {
-    hRows: new RowCollection(),
-    vRows: new RowCollection(),
-  },
-
   initializeSet: function(set) {
     var width = set.horizontal.length
     var height = set.vertical.length
     var cellMatrix = this.produceCellMatrix(width, height)
     var transposedCellMatrix = this.transposeCellMatrix(cellMatrix)
 
-    this.createRows('hRows', set.horizontal, cellMatrix)
-    this.createRows('vRows', set.vertical, transposedCellMatrix)
+    var hRowModels = _.map(set.horizontal, this.createRowModelData(cellMatrix))
+    this.set('hRows', new RowCollection(hRowModels))
+
+    var vRowModels = _.map(set.vertical,
+                           this.createRowModelData(transposedCellMatrix))
+    this.set('vRows', new RowCollection(vRowModels))
+  },
+
+  createRowModelData: function(cells) {
+    return function(blocks, rowId) {
+      return {
+        blocks: blocks,
+        cells: new CellCollection(cells[rowId]),
+      }
+    }
   },
 
   produceCellMatrix: function(width, height) {
-    return _.map(_.range(height), function() {
-      return _.map(_.range(width), function() {
+    return _.map(_.range(width), function() {
+      return _.map(_.range(height), function() {
         return new Cell()
       })
     })
@@ -96,35 +117,15 @@ var Board = Backbone.Model.extend({
   transposeCellMatrix: function(cells) {
     return _.zip.apply(_, cells)
   },
-
-  createRows: function(rowType, blockRows, cellMatrix) {
-    _.each(blockRows, function(blockRow, rowId) {
-      this.get(rowType).add({
-        blocks: blockRow,
-        cells: new CellCollection(cellMatrix[rowId])
-      })
-    }, this)
-  },
-
-  getRequiredHorizontalFields: function() {
-    return this.getRequiredFields('hRows', 'vRows')
-  },
-
-  getRequiredVerticalFields: function() {
-    return this.getRequiredFields('vRows', 'hRows')
-  },
-
-  getRequiredFields: function(rowType, otherRowType) {
-    var blocks = this.get(rowType).pluck('blocks')
-    var comparator = function(block) {return block.length}
-    var spaceForMarker = 1
-    var spaceForBlocks =_.max(blocks, comparator).length
-    var spaceForCells = this.get(otherRowType).length
-    return spaceForMarker + spaceForBlocks + spaceForCells
-  },
 })
 
 // VIEW LAYER
+
+var RowView = Backbone.View.extend({
+})
+
+var RowCollectionView = Backbone.View.extend({
+})
 
 var GridView = Backbone.View.extend({
   template: _.template('<table><tbody></tbody></table>'),
@@ -164,6 +165,14 @@ var BoardView = Backbone.View.extend({
 
   render: function() {
     this.createGrid()
+
+    var view = new RowCollectionView({collection: this.model.get('hRows')})
+    view.render({
+      gridView: this.gridView,
+      fromRow: 1,
+      withCells: true,
+    })
+
     // now place content of model in grid (assign grid fields and call render
     // function of RowView)
     return this
@@ -171,8 +180,8 @@ var BoardView = Backbone.View.extend({
 
   createGrid: function() {
     this.gridView = new GridView({model: new Backbone.Model({
-      width: this.model.getRequiredHorizontalFields(),
-      height: this.model.getRequiredVerticalFields(),
+      width: this.model.get('hRows').totalLength(),
+      height: this.model.get('vRows').totalLength(),
     })})
     this.$el.html(this.gridView.render().el)
   },
