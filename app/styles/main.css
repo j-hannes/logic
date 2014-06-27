@@ -20,6 +20,9 @@ table, tr, td {
   text-align: center;
   color: #333;
 }
+.col div {
+  height: 100%;
+}
 .col:nth-child(-n+6) {
   border-right: 0;
   border-left: 0;

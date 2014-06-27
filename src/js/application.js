@@ -39,8 +39,39 @@ var Cell = Backbone.Model.extend({
   defaults: {
     state: CellState.unknown,
   },
-})
 
+  nextState: function() {
+    switch (this.get('state')) {
+      case CellState.unknown:
+        this.set('state', CellState.filled)
+        break
+
+      case CellState.filled:
+        this.set('state', CellState.blank)
+        break
+
+      case CellState.blank:
+        this.set('state', CellState.unknown)
+        break
+    }
+  },
+
+  previousState: function() {
+    switch (this.get('state')) {
+      case CellState.unknown:
+        this.set('state', CellState.blank)
+        break
+
+      case CellState.filled:
+        this.set('state', CellState.unknown)
+        break
+
+      case CellState.blank:
+        this.set('state', CellState.filled)
+        break
+    }
+  },
+})
 var CellCollection = Backbone.Collection.extend({
   model: Cell,
 })
@@ -64,7 +95,6 @@ var Row = Backbone.Model.extend({
 
   },
 })
-
 var RowCollection = Backbone.Collection.extend({
   model: Row,
 })
@@ -158,6 +188,40 @@ var BlockCollectionView = Backbone.View.extend({
 
 var CellView = Backbone.View.extend({
   className: 'cell',
+
+  events: {
+    'click': 'onClick',
+    'contextmenu': 'onRightClick',
+  },
+
+  onClick: function() {
+    this.model.nextState()
+  },
+
+  onRightClick: function(e) {
+    e.preventDefault()
+    this.model.previousState()
+    return false
+  },
+
+  initialize: function() {
+    this.listenTo(this.model, 'change', this.onModelChange)
+  },
+
+  onModelChange: function() {
+    if (this.model.get('state') === CellState.unknown) {
+      this.$el.html('')
+      this.$el.removeClass('on')
+    }
+    if (this.model.get('state') === CellState.filled) {
+      this.$el.html('')
+      this.$el.addClass('on')
+    }
+    if (this.model.get('state') === CellState.blank) {
+      this.$el.removeClass('on')
+      this.$el.text('•')
+    }
+  },
 
   render: function(coord) {
     var $target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
