@@ -152,16 +152,27 @@ var BlockCollectionView = Backbone.View.extend({
     this.collection.each(function(block, index) {
       var view = new BlockView({model: block})
       view.render(coordinates[index])
-    }, this)
+    })
+  }
+})
+
+var CellView = Backbone.View.extend({
+  className: 'cell',
+
+  render: function(coord) {
+    var $target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
+    // this.$el.text(this.model.cid) // FIXME devtrace
+    $target.html(this.$el)
   }
 
 })
-
-// var CellView = Backbone.View.extend({
-//
-// })
 var CellCollectionView = Backbone.View.extend({
-
+  render: function(coordinates) {
+    this.collection.each(function(cell, index) {
+      var view = new CellView({model: cell})
+      view.render(coordinates[index])
+    })
+  },
 })
 
 var RowView = Backbone.View.extend({
@@ -180,7 +191,7 @@ var RowView = Backbone.View.extend({
     var cellsView = new CellCollectionView({
       collection: this.model.get('cells')
     })
-    // cellsView.render(coordinates.cellsPos)
+    cellsView.render(coordinates.cells)
   },
 })
 
@@ -220,10 +231,14 @@ var RowCollectionHorizontalView = RowCollectionView.extend({
       var x = 2 + buffer + blockPos
       return {x: x, y: position}
     }, this)
+    var cells = _.map(this.collection.at(0).get('cells'), function(cell, cellPos) {
+      return {x: this.getOffset() + cellPos, y: position}
+    }, this)
     var coords = {
       marker: {x: 0, y: position},
       overlap: {x: 1, y: position},
-      blocks: blocks
+      blocks: blocks,
+      cells: cells,
     }
     return coords
   },
@@ -233,14 +248,21 @@ var RowCollectionVerticalView = RowCollectionView.extend({
   getCoordinates: function(rowId) {
     var position = this.offsetX + rowId
     var blocks = _.map(_.range(this.getBlockSpace()), function(blockPos) {
-      var buffer = this.getBlockSpace() - this.collection.at(rowId).get('blocks').length
-      return {x: position, y: 2 + buffer + blockPos}
+      var amountOfBlocks = this.collection.at(rowId).get('blocks').length
+      var buffer = this.getBlockSpace() - amountOfBlocks
+      var y = 2 + buffer + blockPos
+      return {x: position, y: y}
     }, this)
-    return {
+    var cells = _.map(this.collection.at(0).get('cells'), function(cell, cellPos) {
+      return {y: this.getOffset() + cellPos, x: position}
+    }, this)
+    var coords = {
       marker: {x: position, y: 0},
       overlap: {x: position, y: 1},
       blocks: blocks,
+      cells: cells,
     }
+    return coords
   },
 })
 
