@@ -10,9 +10,9 @@ More documentation will be added soon. For now ...
 ... what is still TODO?
 -----------------------
 
+* ~~js refactoring~~ (part one done)
 * add sass
 * decouple hard coded css formatting
-* js refactoring
 * create tests
 * back button (implement router)
 * save puzzle (local store)
