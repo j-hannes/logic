@@ -17,6 +17,21 @@ var Block = Backbone.Model.extend({
 
 var BlockCollection = Backbone.Collection.extend({
   model: Block,
+
+  getLargestBlockValue: function() {
+    var largestBlock = this.max(function(block) {
+      return block.get('value')
+    })
+
+    return largestBlock.get('value')
+  },
+
+  getRequiredSpace: function() {
+    var add = function(a, b) {return a + b}
+    var sum = _.foldl(this.pluck('value'), add, 0)
+    var spaceInbetween = this.length - 1
+    return sum + spaceInbetween
+  },
 })
 
 var CellState = {
@@ -74,16 +89,32 @@ var Marker = Backbone.Model.extend({
 
 var Indicator = Backbone.Model.extend({
   defaults: {
-  }
+    overlap: 0,
+  },
 })
 
 var Row = Backbone.Model.extend({
   defaults: {
-    blocks: new BlockCollection(),
-    cells: new CellCollection(),
-    indicator: new Indicator(),
-    marker: new Marker(),
     solved: false,
+  },
+
+  initialize: function() {
+    this.set('indicator', new Indicator())
+    this.set('marker', new Marker())
+    var indicator = this.get('indicator')
+    var overlap = this.getOverlap()
+    indicator.set('overlap', overlap)
+  },
+
+  getOverlap: function() {
+    var availableSpace = this.get('cells').length
+    var requiredSpace = this.get('blocks').getRequiredSpace()
+    var largestBlock = this.get('blocks').getLargestBlockValue()
+    return requiredSpace + largestBlock - availableSpace
+  },
+
+  isGood: function() {
+    return this.getOverlap() > 0
   },
 })
 var RowCollection = Backbone.Collection.extend({
@@ -153,9 +184,15 @@ var IndicatorView = Backbone.View.extend({
   className: 'indicator',
 
   render: function(coord) {
-    var target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
-    // this.$el.text('O') // FIXME devtrace
-    this.$el.appendTo(target)
+    var $target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
+    var value = this.model.get('overlap')
+    // if (value > 0) {
+      this.$el.text(value)
+    // }
+    if (value > 0) {
+      this.$el.addClass('good')
+    }
+    $target.html(this.$el)
   }
 })
 

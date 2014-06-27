@@ -21,7 +21,7 @@ table, tr, td {
   color: #333;
 }
 .col div {
-  height: 100%;
+  /*height: 100%;*/
 }
 .col:nth-child(-n+6) {
   border-right: 0;
@@ -69,13 +69,13 @@ table, tr, td {
   text-decoration: line-through;
 }
 
-.rowSum {
+.indicator {
   font-size: 12px;
   font-weight: bold;
   padding-top: 2px;
   color: #aaa;
 }
-.rowSum.good {
+.indicator.good {
   color: #268bd2;
 }
 
