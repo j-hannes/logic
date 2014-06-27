@@ -209,17 +209,21 @@ var CellView = Backbone.View.extend({
   },
 
   onModelChange: function() {
-    if (this.model.get('state') === CellState.unknown) {
-      this.$el.html('')
-      this.$el.removeClass('on')
-    }
-    if (this.model.get('state') === CellState.filled) {
-      this.$el.html('')
-      this.$el.addClass('on')
-    }
-    if (this.model.get('state') === CellState.blank) {
-      this.$el.removeClass('on')
-      this.$el.text('•')
+    switch (this.model.get('state')) {
+      case CellState.unknown:
+        this.$el.html('')
+        this.$el.removeClass('on')
+        break
+
+      case CellState.filled:
+        this.$el.html('')
+        this.$el.addClass('on')
+        break
+
+      case CellState.blank:
+        this.$el.removeClass('on')
+        this.$el.text('•')
+        break
     }
   },
 
@@ -228,7 +232,6 @@ var CellView = Backbone.View.extend({
     // this.$el.text(this.model.cid) // FIXME devtrace
     $target.html(this.$el)
   }
-
 })
 var CellCollectionView = Backbone.View.extend({
   render: function(coordinates) {
@@ -258,8 +261,6 @@ var RowView = Backbone.View.extend({
     cellsView.render(coordinates.cells)
   },
 })
-
-
 var RowCollectionView = Backbone.View.extend({
   getBlockSpace: function() {
     var blocks = this.collection.pluck('blocks')
@@ -285,7 +286,6 @@ var RowCollectionView = Backbone.View.extend({
     }, this)
   },
 })
-
 var RowCollectionHorizontalView = RowCollectionView.extend({
   getCoordinates: function(rowId) {
     var position = this.offsetY + rowId
@@ -307,7 +307,6 @@ var RowCollectionHorizontalView = RowCollectionView.extend({
     return coords
   },
 })
-
 var RowCollectionVerticalView = RowCollectionView.extend({
   getCoordinates: function(rowId) {
     var position = this.offsetX + rowId
@@ -395,7 +394,6 @@ var BoardView = Backbone.View.extend({
     return this
   },
 })
-
 
 // PROGRAM EXECUTION
 
