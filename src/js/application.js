@@ -1,21 +1,11 @@
-// var Board     = require('./modules/board/board')
-// var BoardView = require('./modules/board/board-view')
-//
-var set = require('./sets/set-9')
-//
-// var board = new Board()
-// board.createRowsFromSet(set)
-// var boardView = new BoardView({model: board})
-// boardView.render()
-
-// -----------------------------------------------------------------------------
-
 // IMPORTS
 
 var Backbone = require('backbone')
 var _ = require('underscore')
 var $ = require('jquery')
 Backbone.$ = $
+
+var set = require('./sets/set-9')
 
 // DATA LAYER
 
@@ -82,17 +72,18 @@ var Marker = Backbone.Model.extend({
   },
 })
 
+var Indicator = Backbone.Model.extend({
+  defaults: {
+  }
+})
+
 var Row = Backbone.Model.extend({
   defaults: {
     blocks: new BlockCollection(),
     cells: new CellCollection(),
-    overlap: 0,
+    indicator: new Indicator(),
     marker: new Marker(),
     solved: false,
-  },
-
-  initialize: function() {
-
   },
 })
 var RowCollection = Backbone.Collection.extend({
@@ -158,8 +149,8 @@ var MarkerView = Backbone.View.extend({
   }
 })
 
-var OverlapView = Backbone.View.extend({
-  className: 'overlap',
+var IndicatorView = Backbone.View.extend({
+  className: 'indicator',
 
   render: function(coord) {
     var target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
@@ -247,8 +238,8 @@ var RowView = Backbone.View.extend({
     var markerView = new MarkerView({model: this.model.get('marker')})
     markerView.render(coordinates.marker)
 
-    var overlapView = new OverlapView({model: this.model.get('overlap')})
-    overlapView.render(coordinates.overlap)
+    var indicatorView = new IndicatorView({model: this.model.get('indicator')})
+    indicatorView.render(coordinates.indicator)
 
     var blocksView = new BlockCollectionView({
       collection: this.model.get('blocks')
@@ -300,7 +291,7 @@ var RowCollectionHorizontalView = RowCollectionView.extend({
     }, this)
     var coords = {
       marker: {x: 0, y: position},
-      overlap: {x: 1, y: position},
+      indicator: {x: 1, y: position},
       blocks: blocks,
       cells: cells,
     }
@@ -321,7 +312,7 @@ var RowCollectionVerticalView = RowCollectionView.extend({
     }, this)
     var coords = {
       marker: {x: position, y: 0},
-      overlap: {x: position, y: 1},
+      indicator: {x: position, y: 1},
       blocks: blocks,
       cells: cells,
     }
