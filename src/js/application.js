@@ -110,6 +110,13 @@ var Row = Backbone.Model.extend({
     indicator.row = this
     var overlap = this.getOverlap()
     indicator.set('overlap', overlap)
+
+    this.listenTo(this.get('cells'), 'change:state',
+                  this.onCellStateChange)
+  },
+
+  onCellStateChange: function() {
+    this.get('marker').set('on', true)
   },
 
   getAvailableSpace: function() {
@@ -196,11 +203,19 @@ var MarkerView = Backbone.View.extend({
   className: 'marker',
 
   events: {
-    'click': 'toggleMark',
+    'click': 'onClick',
+  },
+
+  onClick: function() {
+    this.model.set('on', !this.model.get('on'))
+  },
+
+  initialize: function() {
+    this.listenTo(this.model, 'change:on', this.toggleMark)
   },
 
   toggleMark: function() {
-    this.$el.toggleClass('marked')
+    this.$el.toggleClass('marked', this.model.get('on'))
   },
 
   render: function(coord) {
