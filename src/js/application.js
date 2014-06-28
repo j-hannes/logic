@@ -92,6 +92,16 @@ var Indicator = Backbone.Model.extend({
   defaults: {
     overlap: 0,
   },
+  
+  initialize: function() {
+    this.listenTo(this, 'change:overlap', this.sendSignal)
+  },
+
+  sendSignal: function() {
+    if (this.isGood()) {
+      this.trigger('is-good')
+    }
+  },
 
   isGood: function() {
     return this.row.isGood()
@@ -113,6 +123,16 @@ var Row = Backbone.Model.extend({
 
     this.listenTo(this.get('cells'), 'change:state',
                   this.onCellStateChange)
+
+    // this.listenTo(this.get('indicator', 'is-good', this.markRow))
+
+    if (this.isGood()) {
+      this.get('marker').set('on', true)
+    }
+  },
+
+  markRow: function() {
+    this.get('marker').set('on', true)
   },
 
   onCellStateChange: function() {
@@ -220,6 +240,7 @@ var MarkerView = Backbone.View.extend({
 
   render: function(coord) {
     var target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
+    this.toggleMark()
     this.$el.appendTo(target)
   }
 })
