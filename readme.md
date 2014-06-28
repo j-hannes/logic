@@ -12,13 +12,13 @@ More documentation will be added soon. For now ...
 
 * ~~js refactoring~~ (part one done)
 * ~~support swiping (fill multiple cells in one go)~~
+* auto marker
 * add sass
 * decouple hard coded css formatting
 * create tests
 * back button (implement router)
 * save puzzle (local store)
 * create proper documentation (readme)
-* auto marker
 * highlight solvable number ;)
 * highlight line + row under cursor
 * recognize crossed out values
