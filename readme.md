@@ -12,7 +12,7 @@ More documentation will be added soon. For now ...
 
 * ~~js refactoring~~ (part one done)
 * ~~support swiping (fill multiple cells in one go)~~
-* auto marker
+* ~~auto marker~~
 * add sass
 * decouple hard coded css formatting
 * create tests
