@@ -12,6 +12,7 @@ var set = require('./sets/set-9')
 var Block = Backbone.Model.extend({
   defaults: {
     value: 0,
+    crossed: false,
   },
 })
 
@@ -91,6 +92,10 @@ var Indicator = Backbone.Model.extend({
   defaults: {
     overlap: 0,
   },
+
+  isGood: function() {
+    return this.row.isGood()
+  },
 })
 
 var Row = Backbone.Model.extend({
@@ -102,19 +107,32 @@ var Row = Backbone.Model.extend({
     this.set('indicator', new Indicator())
     this.set('marker', new Marker())
     var indicator = this.get('indicator')
+    indicator.row = this
     var overlap = this.getOverlap()
     indicator.set('overlap', overlap)
   },
 
+  getAvailableSpace: function() {
+    return this.get('cells').length
+  },
+
+  getRequiredSpace: function() {
+    return this.get('blocks').getRequiredSpace()
+  },
+
+  getLargestBlock: function() {
+    return this.get('blocks').getLargestBlockValue()
+  },
+
   getOverlap: function() {
-    var availableSpace = this.get('cells').length
-    var requiredSpace = this.get('blocks').getRequiredSpace()
-    var largestBlock = this.get('blocks').getLargestBlockValue()
-    return requiredSpace + largestBlock - availableSpace
+    return this.getRequiredSpace()
   },
 
   isGood: function() {
-    return this.getOverlap() > 0
+    var largestBlock   = this.getLargestBlock()
+    var availableSpace = this.getAvailableSpace()
+    var requiredSpace  = this.getRequiredSpace()
+    return largestBlock > availableSpace - requiredSpace
   },
 })
 var RowCollection = Backbone.Collection.extend({
@@ -134,7 +152,19 @@ var Board = Backbone.Model.extend({
     var vRowModels = _.map(set.vertical,
                            this.createRowModelData(transposedCellMatrix))
     this.set('vRows', new RowCollection(vRowModels))
+
+    this.listenTo(this, 'mousedown', this.onMouseDown)
+    this.listenTo(this, 'mouseup', this.onMouseUp)
   },
+
+  onMouseDown: function(e) {
+    this.mousePressed = e.which
+  },
+
+  onMouseUp: function() {
+    this.mousePressed = undefined
+  },
+
 
   createRowModelData: function(cells) {
     return function(blocks, rowId) {
@@ -175,7 +205,6 @@ var MarkerView = Backbone.View.extend({
 
   render: function(coord) {
     var target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
-    // this.$el.text('M') // FIXME devtrace
     this.$el.appendTo(target)
   }
 })
@@ -186,18 +215,30 @@ var IndicatorView = Backbone.View.extend({
   render: function(coord) {
     var $target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
     var value = this.model.get('overlap')
-    // if (value > 0) {
-      this.$el.text(value)
-    // }
-    if (value > 0) {
-      this.$el.addClass('good')
-    }
+    this.$el.text(value)
+    this.$el.toggleClass('good', this.model.isGood())
     $target.html(this.$el)
   }
 })
 
 var BlockView = Backbone.View.extend({
   className: 'block',
+
+  events: {
+    'click': 'onClick',
+  },
+
+  onClick: function() {
+    this.model.set('crossed', !this.model.get('crossed'))
+  },
+
+  initialize: function() {
+    this.listenTo(this.model, 'change:crossed', this.toggleCrossed)
+  },
+
+  toggleCrossed: function() {
+    this.$el.toggleClass('crossed', this.model.get('crossed'))
+  },
 
   render: function(coord) {
     var target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
@@ -220,6 +261,9 @@ var CellView = Backbone.View.extend({
   events: {
     'click': 'onClick',
     'contextmenu': 'onRightClick',
+    'mousedown': 'onMouseDown',
+    'mouseup': 'onMouseUp',
+    'mousemove': 'onMouseMove',
   },
 
   onClick: function() {
@@ -230,6 +274,26 @@ var CellView = Backbone.View.extend({
     e.preventDefault()
     this.model.previousState()
     return false
+  },
+
+  onMouseDown: function(e) {
+    // console.log(e.which)
+    // console.log(this.model.cid, 'mousedown')
+    this.board.trigger('mousedown', e)
+  },
+
+  onMouseUp: function(e) {
+    // console.log(this.model.cid, 'mouseup')
+    this.board.trigger('mouseup', e)
+  },
+
+  onMouseMove: function() {
+    if (this.board.mousePressed === 1 && this.board.dragCell !== this) {
+      this.model.set('state', CellState.filled)
+    }
+    if (this.board.mousePressed === 3 && this.board.dragCell != this) {
+      this.model.set('state', CellState.blank)
+    }
   },
 
   initialize: function() {
@@ -266,7 +330,8 @@ var CellCollectionView = Backbone.View.extend({
     this.collection.each(function(cell, index) {
       var view = new CellView({model: cell})
       view.render(coordinates[index])
-    })
+      view.board = this.board
+    }, this)
   },
 })
 
@@ -286,6 +351,7 @@ var RowView = Backbone.View.extend({
     var cellsView = new CellCollectionView({
       collection: this.model.get('cells')
     })
+    cellsView.board = this.board
     cellsView.render(coordinates.cells)
   },
 })
@@ -310,6 +376,7 @@ var RowCollectionView = Backbone.View.extend({
     this.collection.each(function(row, rowId) {
       var coordinates = this.getCoordinates(rowId)
       var rowView = new RowView({model: row})
+      rowView.board = this.board
       rowView.render(options, coordinates)
     }, this)
   },
@@ -360,21 +427,21 @@ var RowCollectionVerticalView = RowCollectionView.extend({
 var GridView = Backbone.View.extend({
   tagName: 'table',
 
-  template: _.template('<tbody></tbody>'),
+  rowTemplate: _.template('<tr class="row"></tr>'),
+  colTemplate: _.template('<td class="col"></td>'),
 
   render: function() {
-    var rowNumbers = _.range(this.model.get('height'))
-    var colNumbers = _.range(this.model.get('width'))
+    var rowIds = _.range(this.model.get('height'))  // [0 .. height - 1]
+    var colIds = _.range(this.model.get('width'))   // [0 .. width  - 1]
 
-    this.$el.html(this.template())
-    var tbody = this.$('tbody')
-
-    _.each(rowNumbers, function(y) {
-      var row = $('<tr class="row">')
-      _.each(colNumbers, function(x) {
-        row.append($('<td class="col" data-coord="' + x + ','+ y + '">'))
+    _.each(rowIds, function(rowId) {
+      var $row = $(this.rowTemplate())
+      _.each(colIds, function(colId) {
+        var $col = $(this.colTemplate())
+        $col.attr('data-coord', colId + ',' + rowId)
+        $row.append($col)
       }, this)
-      tbody.append(row)
+      this.$el.append($row)
     }, this)
 
     return this
@@ -399,10 +466,12 @@ var BoardView = Backbone.View.extend({
     this.horizontalRowsView = new RowCollectionHorizontalView({
       collection: this.model.get('hRows'),
     })
+    this.horizontalRowsView.board = this.model
 
     this.verticalRowsView = new RowCollectionVerticalView({
       collection: this.model.get('vRows'),
     })
+    this.verticalRowsView.board = this.model
 
     // FUCK IT!
     this.verticalRowsView.offsetX = this.horizontalRowsView.getOffset()
