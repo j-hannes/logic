@@ -11,6 +11,7 @@ More documentation will be added soon. For now ...
 -----------------------
 
 * ~~js refactoring~~ (part one done)
+* ~~support swiping (fill multiple cells in one go)~~
 * add sass
 * decouple hard coded css formatting
 * create tests
@@ -28,6 +29,5 @@ More documentation will be added soon. For now ...
 * multiple colors
 * use Haskell for the core (somehow...)
 * create a list page to select different puzzles
-* support swiping (fill multiple cells in one go)
 
 ![triple facepalm](http://bit.ly/1p8Mt49)
