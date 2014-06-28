@@ -12,6 +12,7 @@ var set = require('./sets/set-9')
 var Block = Backbone.Model.extend({
   defaults: {
     value: 0,
+    crossed: false,
   },
 })
 
@@ -204,7 +205,6 @@ var MarkerView = Backbone.View.extend({
 
   render: function(coord) {
     var target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
-    // this.$el.text('M') // FIXME devtrace
     this.$el.appendTo(target)
   }
 })
@@ -223,6 +223,22 @@ var IndicatorView = Backbone.View.extend({
 
 var BlockView = Backbone.View.extend({
   className: 'block',
+
+  events: {
+    'click': 'onClick',
+  },
+
+  onClick: function() {
+    this.model.set('crossed', !this.model.get('crossed'))
+  },
+
+  initialize: function() {
+    this.listenTo(this.model, 'change:crossed', this.toggleCrossed)
+  },
+
+  toggleCrossed: function() {
+    this.$el.toggleClass('crossed', this.model.get('crossed'))
+  },
 
   render: function(coord) {
     var target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
