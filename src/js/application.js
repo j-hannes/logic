@@ -92,16 +92,6 @@ var Indicator = Backbone.Model.extend({
   defaults: {
     overlap: 0,
   },
-  
-  initialize: function() {
-    this.listenTo(this, 'change:overlap', this.sendSignal)
-  },
-
-  sendSignal: function() {
-    if (this.isSolvable()) {
-      this.trigger('is-solvable')
-    }
-  },
 
   isSolvable: function() {
     return this.row.isSolvable()

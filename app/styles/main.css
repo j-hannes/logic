@@ -72,7 +72,7 @@ table, tr, td {
   padding-top: 2px;
   color: #aaa;
 }
-.indicator.good {
+.indicator.solvable {
   color: #268bd2;
 }
 
