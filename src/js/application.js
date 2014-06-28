@@ -98,13 +98,13 @@ var Indicator = Backbone.Model.extend({
   },
 
   sendSignal: function() {
-    if (this.isGood()) {
-      this.trigger('is-good')
+    if (this.isSolvable()) {
+      this.trigger('is-solvable')
     }
   },
 
-  isGood: function() {
-    return this.row.isGood()
+  isSolvable: function() {
+    return this.row.isSolvable()
   },
 })
 
@@ -124,9 +124,9 @@ var Row = Backbone.Model.extend({
     this.listenTo(this.get('cells'), 'change:state',
                   this.onCellStateChange)
 
-    // this.listenTo(this.get('indicator', 'is-good', this.markRow))
+    // this.listenTo(this.get('indicator', 'is-solvable', this.markRow))
 
-    if (this.isGood()) {
+    if (this.isSolvable()) {
       this.get('marker').set('on', true)
     }
   },
@@ -155,7 +155,7 @@ var Row = Backbone.Model.extend({
     return this.getRequiredSpace()
   },
 
-  isGood: function() {
+  isSolvable: function() {
     var largestBlock   = this.getLargestBlock()
     var availableSpace = this.getAvailableSpace()
     var requiredSpace  = this.getRequiredSpace()
@@ -252,7 +252,7 @@ var IndicatorView = Backbone.View.extend({
     var $target = $('*[data-coord="' + coord.x + ',' + coord.y + '"]')
     var value = this.model.get('overlap')
     this.$el.text(value)
-    this.$el.toggleClass('good', this.model.isGood())
+    this.$el.toggleClass('solvable', this.model.isSolvable())
     $target.html(this.$el)
   }
 })
