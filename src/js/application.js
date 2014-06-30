@@ -22,6 +22,12 @@ var Cell = Backbone.Model.extend({
   },
 })
 
+var Block = Backbone.Model.extend({
+  defaults: {
+    'length': 0
+  },
+})
+
 var Row = Backbone.Model.extend({
   // this is the data type to be send to the haskell backend
   // hence the backbone model
@@ -37,12 +43,18 @@ var createBoard = function(set) {
     })
   })
 
-  var xRows = _.map(set.horizontal, function(blocks, rowId) {
+  var xRows = _.map(set.horizontal, function(blockLengths, rowId) {
+    var blocks = _.map(blockLengths, function(blockLength) {
+      return new Block({length: blockLength})
+    })
     var cellRow = cells[rowId]
     return new Row({blocks: blocks, cells: cellRow})
   })
 
-  var yRows = _.map(set.vertical, function(blocks, rowId) {
+  var yRows = _.map(set.vertical, function(blockLengths, rowId) {
+    var blocks = _.map(blockLengths, function(blockLength) {
+      return new Block({length: blockLength})
+    })
     var cellColumn = _.map(cells, function(cells) {
       return cells[rowId]
     })
@@ -59,7 +71,7 @@ var BlockView = Backbone.View.extend({
   className: 'block',
 
   render: function() {
-    this.$el.text(this.model)
+    this.$el.text(this.model.get('length'))
     return this
   },
 })
@@ -106,7 +118,7 @@ var BoardView = Backbone.View.extend({
     _.each(this.model.yRows, function(row) {
       var $yBlocksCol = $('<td class="col yBlocks">')
       _.each(row.get('blocks'), function(block) {
-        $yBlocksCol.append($('<div class="block">').text(block))
+        $yBlocksCol.append($('<div class="block">').text(block.get('length')))
       })
       $yRowValues.append($yBlocksCol)
     })
