@@ -5,68 +5,12 @@ var _ = require('underscore')
 var $ = require('jquery')
 Backbone.$ = $
 
+var board = require('./modules/board')
+
 var set = require('./sets/set-9')
 
+
 // PROGRAM
-
-//var Board = Backbone.Model.extend({
-var CellState = {
-  unknown: 0,
-  filled: 1,
-  empty: 2,
-}
-
-var Cell = Backbone.Model.extend({
-  defaults: {
-    'state': CellState.unknown,
-  },
-})
-
-var Block = Backbone.Model.extend({
-  defaults: {
-    'length': 0
-  },
-})
-
-var Row = Backbone.Model.extend({
-})
-
-var createCellMatrix = function(width, height) {
-  return _.map(_.range(height), function() {
-    return _.map(_.range(width), function() {
-      return new Cell()
-    })
-  })
-}
-
-var transpose = function(matrix) {
-  return _.zip.apply(_, matrix)
-}
-
-var createRows = function(listOfBlockLengths, cells) {
-  return _.map(listOfBlockLengths, function(blockLengths, rowId) {
-    var blocks = _.map(blockLengths, function(blockLength) {
-      return new Block({length: blockLength})
-    })
-    var cellRow = cells[rowId]
-    return new Row({blocks: blocks, cells: cellRow})
-  })
-}
-
-var createBoard = function(set) {
-  var width = set.vertical.length
-  var height = set.horizontal.length
-
-  var cells = createCellMatrix(width, height)
-
-  var xRows = createRows(set.horizontal, cells)
-  var yRows = createRows(set.vertical, transpose(cells))
-
-  return {
-    xRows: xRows,
-    yRows: yRows,
-  }
-}
 
 var BlockView = Backbone.View.extend({
   className: 'block',
@@ -132,6 +76,6 @@ var BoardView = Backbone.View.extend({
   },
 })
 
-window.board = createBoard(set)
+window.board = board.create(set)
 window.boardView = new BoardView({model: window.board})
 $('#board').html(window.boardView.render().el)
