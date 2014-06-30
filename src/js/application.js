@@ -29,8 +29,6 @@ var Block = Backbone.Model.extend({
 })
 
 var Row = Backbone.Model.extend({
-  // this is the data type to be send to the haskell backend
-  // hence the backbone model
 })
 
 var createBoard = function(set) {
