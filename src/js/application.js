@@ -41,7 +41,6 @@ var createBoard = function(set) {
     var cellRow = cells[rowId]
     return new Row({blocks: blocks, cells: cellRow})
   })
-  console.log(xRows[0])
 
   var yRows = _.map(set.vertical, function(blocks, rowId) {
     var cellColumn = _.map(cells, function(cells) {
@@ -81,7 +80,6 @@ var RowView = Backbone.View.extend({
     })
     this.$el.html($rowValuesColumn)
 
-    // console.log(this.model.get('cells').length)
     _.each(this.model.get('cells'), function(cell) {
       var cellView = new CellView({model: cell})
       var $cellColumn = $('<td class="col">')
@@ -117,7 +115,6 @@ var BoardView = Backbone.View.extend({
 
     // and now we just need to render the row values of the vertical rows
     
-    // console.log(this.model)
     return this
   },
 })
