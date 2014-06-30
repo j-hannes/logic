@@ -31,33 +31,36 @@ var Block = Backbone.Model.extend({
 var Row = Backbone.Model.extend({
 })
 
-var createBoard = function(set) {
-  var width = set.vertical.length
-  var height = set.horizontal.length
-
-  var cells = _.map(_.range(height), function() {
+var createCellMatrix = function(width, height) {
+  return _.map(_.range(height), function() {
     return _.map(_.range(width), function() {
       return new Cell()
     })
   })
+}
 
-  var xRows = _.map(set.horizontal, function(blockLengths, rowId) {
+var transpose = function(matrix) {
+  return _.zip.apply(_, matrix)
+}
+
+var createRows = function(listOfBlockLengths, cells) {
+  return _.map(listOfBlockLengths, function(blockLengths, rowId) {
     var blocks = _.map(blockLengths, function(blockLength) {
       return new Block({length: blockLength})
     })
     var cellRow = cells[rowId]
     return new Row({blocks: blocks, cells: cellRow})
   })
+}
 
-  var yRows = _.map(set.vertical, function(blockLengths, rowId) {
-    var blocks = _.map(blockLengths, function(blockLength) {
-      return new Block({length: blockLength})
-    })
-    var cellColumn = _.map(cells, function(cells) {
-      return cells[rowId]
-    })
-    return new Row({blocks: blocks, cells: cellColumn})
-  })
+var createBoard = function(set) {
+  var width = set.vertical.length
+  var height = set.horizontal.length
+
+  var cells = createCellMatrix(width, height)
+
+  var xRows = createRows(set.horizontal, cells)
+  var yRows = createRows(set.vertical, transpose(cells))
 
   return {
     xRows: xRows,
