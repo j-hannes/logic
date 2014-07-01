@@ -71,13 +71,20 @@ var RowView = Backbone.View.extend({
   },
 })
 
+var YBlockCol = Backbone.View.extend({
+  tagName: 'td',
+  className: 'col yBlocks',
+
+  render: function() {
+    var blocks = _.map(this.model.get('blocks'), createBlockElement)
+    this.$el.append(blocks)
+    return this
+  },
+})
+
 var createYBlockElement = function(rowModel) {
-  // this jquery stuff needs to go
-  var $yBlocksCol = $('<td class="col yBlocks">')
-  _.each(rowModel.get('blocks'), function(block) {
-    $yBlocksCol.append($('<div class="block">').text(block.get('length')))
-  })
-  return $yBlocksCol
+  var yBlockCol = new YBlockCol({model: rowModel})
+  return yBlockCol.render().el
 }
 
 var TitleColumnView = Backbone.View.extend({
@@ -91,7 +98,7 @@ var TitleColumnView = Backbone.View.extend({
   },
 })
 
-var BlockValuesRowView = Backbone.View.extend({
+var HeadRow = Backbone.View.extend({
   tagName: 'tr',
   className: 'row',
 
@@ -111,14 +118,14 @@ var createRowElement = function(model) {
   return view.render().el
 }
 
-var BoardView = Backbone.View.extend({
+var Board = Backbone.View.extend({
   tagName: 'table',
 
   render: function() {
     var rowElements = _.map(this.model.xRows, createRowElement)
     this.$el.append(rowElements)
 
-    var blockValuesTopRowView = new BlockValuesRowView({model: this.model})
+    var blockValuesTopRowView = new HeadRow({model: this.model})
     this.$el.prepend(blockValuesTopRowView.render().el)
 
     return this
@@ -126,5 +133,5 @@ var BoardView = Backbone.View.extend({
 })
 
 window.board = board.create(set)
-window.boardView = new BoardView({model: window.board})
+window.boardView = new Board({model: window.board})
 $('#board').html(window.boardView.render().el)
