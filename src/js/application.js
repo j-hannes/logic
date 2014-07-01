@@ -36,23 +36,28 @@ var ColumnView = Backbone.View.extend({
   },
 })
 
-var createBlockElement = function(model) {
-  // create AND render?
+var createBlock = function(model) {
   var view = new BlockView({model: model})
   return view.render().el
 }
 
-var createCellColumnElement = function(cellModel) {
+var createCellColumn = function(cellModel) {
   // two things in once?
   var cellView = new CellView({model: cellModel})
   var columnView = new ColumnView()
   return columnView.render(cellView.render().el).el
 }
 
+var createBlockColumn = function(model) {
+  var blockViews = _.map(model.get('blocks'), createBlock)
+  var columnView = new ColumnView()
+  return columnView.render(blockViews, 'xBlocks').el
+}
+
 var RowView = Backbone.View.extend({
   tagName: 'tr',
   className: 'row',
-  
+
   render: function() {
     this.renderBlockColumn()
     this.renderCellColumns()
@@ -60,14 +65,11 @@ var RowView = Backbone.View.extend({
   },
 
   renderBlockColumn: function() {
-    var blockViews = _.map(this.model.get('blocks'), createBlockElement)
-    var columnView = new ColumnView()
-    this.$el.html(columnView.render(blockViews, 'xBlocks').el)
+    this.$el.html(createBlockColumn(this.model))
   },
 
   renderCellColumns: function() {
-    var cellColumns = _.map(this.model.get('cells'), createCellColumnElement)
-    this.$el.append(cellColumns)
+  this.$el.append(_.map(this.model.get('cells'), createCellColumn))
   },
 })
 
@@ -76,13 +78,12 @@ var YBlockCol = Backbone.View.extend({
   className: 'col yBlocks',
 
   render: function() {
-    var blocks = _.map(this.model.get('blocks'), createBlockElement)
-    this.$el.append(blocks)
+    this.$el.append(_.map(this.model.get('blocks'), createBlock))
     return this
   },
 })
 
-var createYBlockElement = function(rowModel) {
+var createYBlock = function(rowModel) {
   var yBlockCol = new YBlockCol({model: rowModel})
   return yBlockCol.render().el
 }
@@ -98,23 +99,29 @@ var TitleColumnView = Backbone.View.extend({
   },
 })
 
+var createTitleColumn = function(model) {
+  var view = new TitleColumnView({model: model})
+  return view.render().el
+}
+
 var HeadRow = Backbone.View.extend({
   tagName: 'tr',
   className: 'row',
 
   render: function() {
-    var titleView = new TitleColumnView({model: this.model})
-    this.$el.append(titleView.render().el)
-
-    var yBlockElements =  _.map(this.model.yRows, createYBlockElement)
-    this.$el.append(yBlockElements)
-
+    this.$el.append(createTitleColumn(this.model))
+    this.$el.append(_.map(this.model.yRows, createYBlock))
     return this
   },
 })
 
-var createRowElement = function(model) {
+var createRow = function(model) {
   var view = new RowView({model: model})
+  return view.render().el
+}
+
+var createHeadRow = function(model) {
+  var view = new HeadRow({model: model})
   return view.render().el
 }
 
@@ -122,12 +129,8 @@ var Board = Backbone.View.extend({
   tagName: 'table',
 
   render: function() {
-    var rowElements = _.map(this.model.xRows, createRowElement)
-    this.$el.append(rowElements)
-
-    var blockValuesTopRowView = new HeadRow({model: this.model})
-    this.$el.prepend(blockValuesTopRowView.render().el)
-
+    this.$el.html(createHeadRow(this.model))
+    this.$el.append(_.map(this.model.xRows, createRow))
     return this
   },
 })
