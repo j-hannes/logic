@@ -25,6 +25,7 @@ exports.create = function(set) {
   var height = set.horizontal.length
   var cells = createCellMatrix(width, height)
   return {
+    title: 'a',
     xRows: createRows(set.horizontal, cells),
     yRows: createRows(set.vertical, transpose(cells))
   }

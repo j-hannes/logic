@@ -36,14 +36,14 @@ var ColumnView = Backbone.View.extend({
   },
 })
 
-// create AND render?
 var createBlockElement = function(model) {
+  // create AND render?
   var view = new BlockView({model: model})
   return view.render().el
 }
 
-// two things in once?
 var createCellColumnElement = function(cellModel) {
+  // two things in once?
   var cellView = new CellView({model: cellModel})
   var columnView = new ColumnView()
   return columnView.render(cellView.render().el).el
@@ -71,30 +71,56 @@ var RowView = Backbone.View.extend({
   },
 })
 
+var createYBlockElement = function(rowModel) {
+  // this jquery stuff needs to go
+  var $yBlocksCol = $('<td class="col yBlocks">')
+  _.each(rowModel.get('blocks'), function(block) {
+    $yBlocksCol.append($('<div class="block">').text(block.get('length')))
+  })
+  return $yBlocksCol
+}
+
+var TitleColumnView = Backbone.View.extend({
+  // This is like coded HTML. Question: Can we put this in (hbs) templates?
+  tagName: 'td',
+  className: 'col xBlocks title',
+
+  render: function() {
+    this.$el.text(this.model.title)
+    return this
+  },
+})
+
+var BlockValuesRowView = Backbone.View.extend({
+  tagName: 'tr',
+  className: 'row',
+
+  render: function() {
+    var titleView = new TitleColumnView({model: this.model})
+    this.$el.append(titleView.render().el)
+
+    var yBlockElements =  _.map(this.model.yRows, createYBlockElement)
+    this.$el.append(yBlockElements)
+
+    return this
+  },
+})
+
+var createRowElement = function(model) {
+  var view = new RowView({model: model})
+  return view.render().el
+}
+
 var BoardView = Backbone.View.extend({
   tagName: 'table',
 
   render: function() {
-    _.each(this.model.xRows, function(row) {
-      var rowView = new RowView({model: row})
-      this.$el.append(rowView.render().el)
-    }, this)
+    var rowElements = _.map(this.model.xRows, createRowElement)
+    this.$el.append(rowElements)
 
-    var $yRowValues = $('<tr class="row">')
-    $yRowValues.append($('<td class="col xBlocks title">').text('a'))
+    var blockValuesTopRowView = new BlockValuesRowView({model: this.model})
+    this.$el.prepend(blockValuesTopRowView.render().el)
 
-    _.each(this.model.yRows, function(row) {
-      var $yBlocksCol = $('<td class="col yBlocks">')
-      _.each(row.get('blocks'), function(block) {
-        $yBlocksCol.append($('<div class="block">').text(block.get('length')))
-      })
-      $yRowValues.append($yBlocksCol)
-    })
-
-    this.$el.prepend($yRowValues)
-
-    // and now we just need to render the row values of the vertical rows
-    
     return this
   },
 })
