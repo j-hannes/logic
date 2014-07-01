@@ -25,27 +25,50 @@ var CellView = Backbone.View.extend({
   className: 'cell',
 })
 
+var ColumnView = Backbone.View.extend({
+  tagName: 'td',
+  className: 'col',
+
+  render: function(content, blockClass) {
+    this.$el.append(content)
+    this.$el.addClass(blockClass)
+    return this
+  },
+})
+
+// create AND render?
+var createBlockElement = function(model) {
+  var view = new BlockView({model: model})
+  return view.render().el
+}
+
+// two things in once?
+var createCellColumnElement = function(cellModel) {
+  var cellView = new CellView({model: cellModel})
+  var columnView = new ColumnView()
+  return columnView.render(cellView.render().el).el
+}
+
 var RowView = Backbone.View.extend({
   tagName: 'tr',
   className: 'row',
   
   render: function() {
-    var $rowValuesColumn = $('<td class="col xBlocks">')
-    _.each(this.model.get('blocks'), function(block) {
-      var blockView = new BlockView({model: block})
-      $rowValuesColumn.append(blockView.render().el)
-    })
-    this.$el.html($rowValuesColumn)
-
-    _.each(this.model.get('cells'), function(cell) {
-      var cellView = new CellView({model: cell})
-      var $cellColumn = $('<td class="col">')
-      $cellColumn.append(cellView.render().el)
-      this.$el.append($cellColumn)
-    }, this)
-
+    this.renderBlockColumn()
+    this.renderCellColumns()
     return this
-  }
+  },
+
+  renderBlockColumn: function() {
+    var blockViews = _.map(this.model.get('blocks'), createBlockElement)
+    var columnView = new ColumnView()
+    this.$el.html(columnView.render(blockViews, 'xBlocks').el)
+  },
+
+  renderCellColumns: function() {
+    var cellColumns = _.map(this.model.get('cells'), createCellColumnElement)
+    this.$el.append(cellColumns)
+  },
 })
 
 var BoardView = Backbone.View.extend({
