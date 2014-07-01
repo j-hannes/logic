@@ -83,11 +83,6 @@ var YBlockCol = Backbone.View.extend({
   },
 })
 
-var createYBlock = function(rowModel) {
-  var yBlockCol = new YBlockCol({model: rowModel})
-  return yBlockCol.render().el
-}
-
 var TitleColumnView = Backbone.View.extend({
   // This is like coded HTML. Question: Can we put this in (hbs) templates?
   tagName: 'td',
@@ -99,39 +94,64 @@ var TitleColumnView = Backbone.View.extend({
   },
 })
 
-var createTitleColumn = function(model) {
-  var view = new TitleColumnView({model: model})
-  return view.render().el
-}
-
 var HeadRow = Backbone.View.extend({
   tagName: 'tr',
   className: 'row',
 
   render: function() {
-    this.$el.append(createTitleColumn(this.model))
-    this.$el.append(_.map(this.model.yRows, createYBlock))
+    this.createAndRenderTitleColumnView()
+    this.createAndRenderYBlockColViews()
     return this
   },
+
+  createAndRenderTitleColumnView: function() {
+    var view = new TitleColumnView({model: this.model})
+    this.$el.html(view.render().el)
+  },
+
+  createAndRenderYBlockColViews: function() {
+    var views = _.map(this.model.yRows, this.createYBlockColView)
+    _.each(views, this.renderYBlockColView, this)
+  },
+
+  createYBlockColView: function(model) {
+    return new YBlockCol({model: model})
+  },
+
+  renderYBlockColView: function(view) {
+    this.$el.append(view.render().el)
+  },
 })
-
-var createRow = function(model) {
-  var view = new RowView({model: model})
-  return view.render().el
-}
-
-var createHeadRow = function(model) {
-  var view = new HeadRow({model: model})
-  return view.render().el
-}
 
 var Board = Backbone.View.extend({
   tagName: 'table',
 
   render: function() {
-    this.$el.html(createHeadRow(this.model))
-    this.$el.append(_.map(this.model.xRows, createRow))
+    this.createAndRenderHeadRowView()
+    this.createAndRenderRowViews()
     return this
+  },
+
+  createAndRenderHeadRowView: function() {
+    var view = new HeadRow({model: this.model})
+    this.$el.html(view.render().el)
+  },
+
+  createAndRenderRowViews: function() {
+    var views = this.createRowViews()
+    _.each(views, this.renderRowView, this)
+  },
+  
+  renderRowView: function(view) {
+    this.$el.append(view.render().el)
+  },
+
+  createRowViews: function() {
+    return _.map(this.model.xRows, this.createRowView)
+  },
+
+  createRowView: function(model) {
+    return new RowView({model: model})
   },
 })
 
