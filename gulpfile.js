@@ -14,7 +14,7 @@ gulp.task('connect', function() {
 gulp.task('watch', function() {
   watch({
     glob: [
-      'app/index.html',
+      'app/*.html',
       'app/styles/**/*.css',
       'app/scripts/**/*.js',
       'app/images/**/*.*',
