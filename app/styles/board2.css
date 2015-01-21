@@ -1,0 +1,115 @@
+.board {
+  margin: 20px;
+  font-size: 13px;
+  color: #333;
+}
+
+.board-info,
+.vertical-markers,
+.vertical-sums,
+.vertical-blocks,
+.vertical-markers .marker,
+.vertical-sums .sum,
+.vertical-blocks .vblocks,
+.horizontal-markers,
+.horizontal-sums,
+.horizontal-blocks,
+.horizontal-markers .marker,
+.horizontal-sums .sum,
+.horizontal-blocks .hblocks,
+.cell-row,
+.cell {
+  border: 0 solid #ccc;
+}
+
+.board-info {
+  border-width: 2px;
+}
+
+.marker, .sum, .vblocks .block, .hblocks .block, .cell {
+  min-width: 20px;
+  min-height: 20px;
+  text-align: center;
+  line-height: 20px;
+}
+.marker, .sum {
+  font-weight: bold;
+  color: #aaa;
+}
+.marker.on {
+  background-color: #93a1a1;
+}
+.sum.highlight {
+  color: #268bd2;
+}
+
+.vertical-markers,
+.vertical-sums,
+.vertical-blocks {
+  border-top-width: 2px;
+  border-bottom-width: 2px;
+}
+.vertical-markers .marker,
+.vertical-sums .sum,
+.vertical-blocks .vblocks {
+  display: table-cell;
+  vertical-align: bottom;
+  border-right-width: 1px;
+}
+.vertical-markers .marker:nth-child(5n),
+.vertical-sums .sum:nth-child(5n),
+.vertical-blocks .vblocks:nth-child(5n) {
+  border-right-width: 2px;
+}
+
+.horizontal-markers,
+.horizontal-sums,
+.horizontal-blocks {
+  border-left-width: 2px;
+  border-right-width: 2px;
+}
+.horizontal-markers .marker,
+.horizontal-sums .sum,
+.horizontal-blocks .hblocks {
+  border-bottom-width: 1px;
+}
+.horizontal-markers .marker:nth-child(5n),
+.horizontal-sums .sum:nth-child(5n),
+.horizontal-blocks .hblocks:nth-child(5n) {
+  border-bottom-width: 2px;
+}
+
+.hblocks {
+  text-align: right;
+}
+.hblocks .block {
+  display: inline-block;
+}
+.cell-row {
+  overflow: auto;
+  font-size: 0px;
+  letter-spacing: 0px;
+  word-spacing: 0px;
+}
+.cell-row:nth-child(5n) {
+  border-bottom-width: 1px;
+}
+
+.cell {
+  vertical-align: top;
+  display: inline-block;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  color: #666;
+  font-size: 16px;
+  text-align: center;
+}
+.cell.on {
+  background-color: #9CC222;
+}
+.cell:nth-child(5n) {
+  border-right-width: 2px;
+}
+.cell:nth-child(10n) {
+  clear: left;
+}
