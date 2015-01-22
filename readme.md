@@ -6,8 +6,8 @@ Logic puzzle app
 Redesign
 --------
 
-1. ~~rework html for puzzle~~
-2. build puzzle from file (parse string) (use angular)
+1. ~~rework html for puzzle~~ ✓
+2. build puzzle from file (~~parse string~~ ✓) (use angular)
 3. add user interaction via FRP
 
 Later
