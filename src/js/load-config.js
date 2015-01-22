@@ -3,22 +3,22 @@
 require('./lib/hs').expose(global);
 var fs = require('fs');
 
-
-/**
- * Reads a file from the file system and returns its content.
- */
-// FilePath -> String
+//+ a -> String
 var toString = function(obj) {return obj.toString()};
+//+ FilePath -> String
 var readFile = compose(toString, fs.readFileSync);
 
-
+//+ [String] -> Bool
 var delimiter = contains('');
+//+ [a] -> [a]
 var getHorizontalBlocks = takeWhile(not(delimiter));
+//+ [a] -> [a]
 var getVerticalBlocks = compose(
   takeWhile(not(delimiter)),
   tail,
   dropWhile(not(delimiter))
 );
+//+ String -> PuzzleConfig
 var parseConfig = function(configString) {
   var configBlocks = map(words, lines(configString));
   return {
@@ -26,16 +26,11 @@ var parseConfig = function(configString) {
     verticalBlocks: getVerticalBlocks(configBlocks),
   };
 };
-
-
-/**
- * Pass a file path to receive a puzzle config object.
- */
-// data PuzzleConfig = PuzzleConfig {
+// type PuzzleConfig = {
 //     horizontalBlocks :: [BlockLengths]
 //   , verticalBlocks :: [BlockLenghts]
 // }
-//
-// Int -> PuzzleConfig
+
+//+ FilePath -> PuzzleConfig
 module.exports = compose(parseConfig, readFile);
 
