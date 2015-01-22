@@ -1,14 +1,22 @@
 Logic puzzle app
 ================
 
-We create something like this:
-
 ![app screenshot](assets/logic_preview.png)
 
-More documentation will be added soon. For now ...
+Redesign
+--------
 
-... what is still TODO?
------------------------
+1. ~~rework html for puzzle~~
+2. build puzzle from file (parse string) (use angular)
+3. add user interaction via FRP
+
+Later
+-----
+
+* create input page for new puzzles
+
+Old TODOs
+---------
 
 * ~~js refactoring~~ (part one done)
 * ~~support swiping (fill multiple cells in one go)~~
@@ -30,4 +38,3 @@ More documentation will be added soon. For now ...
 * use Haskell for the core (somehow...)
 * create a list page to select different puzzles
 
-![triple facepalm](http://bit.ly/1p8Mt49)
