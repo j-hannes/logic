@@ -1,4 +1,4 @@
 node_modules
 app/components
 
-app/scripts/application.js
+app/scripts/app.js
