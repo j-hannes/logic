@@ -23,16 +23,16 @@ gulp.task('watch', function() {
 
   watch({
     glob: [
-      'src/js/**/*.js',
+      'src/**/*.js',
     ]
   }, ['browserify'])
 })
 
 gulp.task('browserify', function() {
-  gulp.src('src/js/application.js')
+  gulp.src('src/js/app.js')
       .pipe(browserify({
         insertGlobals: true,
-        debug: !gulp.env.production,
+        debug: true,
       }))
       .on('error', function(err) {
         gutil.log(err.message)

@@ -29,4 +29,3 @@ r.dropWhile = r.curry(function(cond, list) {
 
 // export the extended ramda library
 module.exports = r
-

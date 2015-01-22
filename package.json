@@ -5,6 +5,7 @@
   "main": "gulpfile.js",
   "author": "",
   "license": "MIT",
+  "repository": "https://github.com/j-hannes/logic",
   "devDependencies": {
     "gulp": "^3.7.0",
     "gulp-browserify": "^0.5.0",
