@@ -2,7 +2,13 @@ var gulp    = require('gulp')
 var connect = require('gulp-connect')
 var watch   = require('gulp-watch')
 var gutil   = require('gulp-util')
-var browserify = require('gulp-browserify')
+var source = require('vinyl-source-stream')
+var watchify = require('watchify')
+var browserify = require('browserify')
+
+var bundler = watchify(browserify('./src/app.js', watchify.args));
+bundler.transform('brfs')
+       .transform('exposify', {expose: {angular: 'angular'}});
 
 gulp.task('connect', function() {
   connect.server({
@@ -14,33 +20,27 @@ gulp.task('connect', function() {
 gulp.task('watch', function() {
   watch({
     glob: [
-      'app/*.html',
-      'app/styles/**/*.css',
-      'app/scripts/**/*.js',
-      'app/images/**/*.*',
+      'app/index.html',
+      'app/styles/main.css',
+      'app/scripts/app.js'
     ]
   }).pipe(connect.reload())
-
-  watch({
-    glob: [
-      'src/**/*.js',
-    ]
-  }, ['browserify'])
 })
 
-gulp.task('browserify', function() {
-  gulp.src('src/js/app.js')
-      .pipe(browserify({
-        insertGlobals: true,
-        debug: true,
-      }))
-      .on('error', function(err) {
-        gutil.log(err.message)
-      })
-      .pipe(gulp.dest('./app/scripts'))
-})
+
+function bundle() {
+  return bundler.bundle()
+    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .pipe(source('app.js'))
+    .pipe(gulp.dest('./app/scripts'))
+}
+
+gulp.task('js', bundle);
+bundler.on('update', bundle);
 
 gulp.task('default', [
+  'js',
   'connect',
   'watch',
 ])
+
