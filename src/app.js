@@ -1,5 +1,8 @@
 var angular = require('angular');
 
-angular.module('logic-board', []);
-console.log('hallo')
+var app = angular.module('logic-board', []);
+app.controller('BoardCtrl', function() {
+  this.name = 'TestBoard';
+  this.size = '30x20';
+});
 

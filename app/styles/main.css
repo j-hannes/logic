@@ -24,6 +24,8 @@
 
 .board-info {
   border-width: 2px;
+  text-align: center;
+  font-size: 20px;
 }
 
 .marker, .sum, .vblocks .block, .hblocks .block, .cell {

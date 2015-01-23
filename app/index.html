@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="logic-board">
 <head>
 	<meta charset="UTF-8">
 	<title></title>
   <link rel="stylesheet" href="components/normalize-css/normalize.css">
   <link rel="stylesheet" href="styles/main.css">
 </head>
-<body>
-  <table class="board">
+<body ng-cloak>
+  <table class="board" ng-controller="BoardCtrl as board">
     <tr>
-      <td colspan="3" rowspan="3" class="board-info"></td>
+      <td colspan="3" rowspan="3" class="board-info">
+        {{ board.name }} <br>
+        {{ board.size }}
+      </td>
       <td class="vertical-markers">
         <div class="marker">&nbsp;</div>
         <div class="marker">&nbsp;</div>
@@ -276,6 +279,7 @@
       </td>
     </tr>
   </table>
+  <script src="components/angular/angular.min.js"></script>
   <script src="scripts/app.js"></script>
 </body>
 </html>
